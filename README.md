@@ -1,7 +1,7 @@
 # Weather Data Analysis And Prediction
 ## DESCRIPTION:
 
-this Weather Analysis And Prediction System analyzes historical weather data and predict future temperature trends.
+This Weather Analysis And Prediction System analyzes historical weather data and predict future temperature trends.
 It is useful for working with time series data and basic regression techniques.
 
 ## Explanation :
