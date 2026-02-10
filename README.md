@@ -3,6 +3,14 @@
 
 This Weather Analysis And Prediction System analyzes historical weather data and predict future temperature trends.
 It is useful for working with time series data and basic regression techniques.
+## LANGUAGES USED:
+The following programming languages are used to prepare the project:
+
+->HTML
+
+->CSS
+
+->JAVASCRIPT
 
 ## Explanation :
 The below output it shows the Weather analysis, Historical Trends and Future Temperature Regression. 
