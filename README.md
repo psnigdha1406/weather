@@ -4,6 +4,13 @@
 this Weather Analysis And Prediction System analyzes historical weather data and predict future temperature trends.
 It is useful for working with time series data and basic regression techniques.
 
+## Explanation :
+The below output it shows the Weather analysis, Historical Trends and Future Temperature Regression. 
+The Blue lines tell about Historical Temperature and the dotted Orange line tells us about Predicted Trend Lines
+It is used to predict future temperature trends.
+Users can toggle between individual views for historical data and predictive trends, or overlay them for a comprehensive comparative analysis
+
+
 
 ## OUTPUT:
 
