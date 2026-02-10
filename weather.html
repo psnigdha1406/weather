@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Trend Predictor</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --accent: #38bdf8;
+            --text: #f1f5f9;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1000px;
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        h1 { margin: 0; color: var(--accent); }
+        p { color: #94a3b8; }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: rgba(255,255,255,0.05);
+            padding: 1rem;
+            border-radius: 10px;
+            text-align: center;
+            border-left: 4px solid var(--accent);
+        }
+
+        canvas {
+            max-height: 500px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Weather Data Analysis</h1>
+        <p>Historical Trends & Future Temperature Regression</p>
+    </header>
+
+    <div class="stats">
+        <div class="stat-card">
+            <small>Data Points Analyzed</small>
+            <div id="data-count">0</div>
+        </div>
+        <div class="stat-card">
+            <small>Avg. Growth Rate</small>
+            <div id="trend-rate">Calculating...</div>
+        </div>
+    </div>
+
+    <canvas id="weatherChart"></canvas>
+</div>
+
+<script>
+    // 1. DATA GENERATION (Simulating 5 years of data)
+    const labels = [];
+    const historicalData = [];
+    const trendData = [];
+    
+    function generateData() {
+        let baseTemp = 20;
+        for (let i = 0; i < 60; i++) { // 60 months
+            labels.push(`Month ${i + 1}`);
+            // Sine wave for seasons + random noise + slight upward trend
+            let seasonalEffect = 10 * Math.sin(i * 0.5);
+            let noise = (Math.random() - 0.5) * 4;
+            let trend = i * 0.1; 
+            historicalData.push(parseFloat((baseTemp + seasonalEffect + noise + trend).toFixed(2)));
+        }
+    }
+
+    // 2. LINEAR REGRESSION LOGIC (y = mx + b)
+    function calculateRegression(data) {
+        const n = data.length;
+        let sumX = 0, sumY = 0, sumXY = 0, sumXX = 0;
+        
+        for (let i = 0; i < n; i++) {
+            sumX += i;
+            sumY += data[i];
+            sumXY += i * data[i];
+            sumXX += i * i;
+        }
+
+        const slope = (n * sumXY - sumX * sumY) / (n * sumXX - sumX * sumX);
+        const intercept = (sumY - slope * sumX) / n;
+
+        // Create trend line points (including 12 months prediction)
+        const fullTrend = [];
+        for (let i = 0; i < n + 12; i++) {
+            if (i >= n) labels.push(`Future ${i - n + 1}`);
+            fullTrend.push(parseFloat((slope * i + intercept).toFixed(2)));
+        }
+        return { fullTrend, slope };
+    }
+
+    // 3. INITIALIZE
+    generateData();
+    const { fullTrend, slope } = calculateRegression(historicalData);
+
+    document.getElementById('data-count').innerText = historicalData.length + " Months";
+    document.getElementById('trend-rate').innerText = "+" + (slope * 12).toFixed(2) + "°/year";
+
+    // 4. CHART RENDERING
+    const ctx = document.getElementById('weatherChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Historical Temperature (°C)',
+                data: historicalData,
+                borderColor: '#38bdf8',
+                backgroundColor: 'rgba(56, 189, 248, 0.1)',
+                fill: true,
+                tension: 0.4
+            }, {
+                label: 'Predicted Trend Line',
+                data: fullTrend,
+                borderColor: '#fb7185',
+                borderDash: [5, 5],
+                pointRadius: 0,
+                fill: false
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { labels: { color: '#f1f5f9' } }
+            },
+            scales: {
+                y: {
+                    grid: { color: 'rgba(255,255,255,0.1)' },
+                    ticks: { color: '#94a3b8' }
+                },
+                x: {
+                    grid: { display: false },
+                    ticks: { color: '#94a3b8' }
+                }
+            }
+        }
+    });
+</script>
+
+</body>
+</html>
